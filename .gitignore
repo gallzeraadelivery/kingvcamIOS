@@ -1,0 +1,21 @@
+# Pacotes e extrações locais (não versionar binários sem pedido)
+incoming/*
+!incoming/.gitkeep
+extracted/**
+!extracted/.gitkeep
+!extracted/REPORT.md
+repack/**
+!repack/.gitkeep
+dist/*
+!dist/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
