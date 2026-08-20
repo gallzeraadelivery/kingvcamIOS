@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usuários · KingVCam</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">KingVCam · Admin</div>
+    <nav class="admin-nav">
+      <a href="/admin">Pedidos</a>
+      <a class="active" href="/admin/users">Usuários</a>
+      <span class="muted">{{ user.username }}</span>
+      <form method="post" action="/admin/logout">
+        <button class="ghost" type="submit">Sair</button>
+      </form>
+    </nav>
+  </header>
+  <main class="admin">
+    {% if flash == "created" %}
+    <p class="flash ok">Usuário criado.</p>
+    {% elif flash == "password" %}
+    <p class="flash ok">Senha atualizada.</p>
+    {% elif flash == "role" %}
+    <p class="flash ok">Perfil atualizado.</p>
+    {% elif flash == "toggled" %}
+    <p class="flash ok">Status atualizado.</p>
+    {% endif %}
+    {% if error == "exists" %}
+    <p class="flash error">Esse usuário já existe.</p>
+    {% elif error == "self" %}
+    <p class="flash error">Você não pode alterar o próprio acesso desta forma.</p>
+    {% elif error == "last" %}
+    <p class="flash error">Precisa restar pelo menos um admin ativo.</p>
+    {% endif %}
+
+    <section class="admin-grid">
+      <form class="card admin-card" method="post" action="/admin/users">
+        <h2>Novo usuário</h2>
+        <input name="username" placeholder="usuario" minlength="3" maxlength="32" required>
+        <input name="password" type="password" placeholder="senha (mín. 8)" minlength="8" required>
+        <select name="role">
+          <option value="operator">Operador</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Criar usuário</button>
+      </form>
+      <article class="card admin-card">
+        <h2>Perfis</h2>
+        <p class="note" style="text-align:left;margin:0">Admin gerencia pedidos e usuários. Operador só gerencia chaves e pedidos.</p>
+      </article>
+    </section>
+
+    <section class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Usuário</th>
+            <th>Perfil</th>
+            <th>Status</th>
+            <th>Último login</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in users %}
+          <tr>
+            <td>{{ item.username }}{% if item.id == user.id %} <span class="muted">(você)</span>{% endif %}</td>
+            <td>
+              <form method="post" action="/admin/users/{{ item.id }}/role">
+                <select name="role" onchange="this.form.submit()">
+                  <option value="admin" {% if item.role == "admin" %}selected{% endif %}>Admin</option>
+                  <option value="operator" {% if item.role == "operator" %}selected{% endif %}>Operador</option>
+                </select>
+              </form>
+            </td>
+            <td><span class="pill {% if item.is_active %}paid{% else %}revoked{% endif %}">{% if item.is_active %}ativo{% else %}inativo{% endif %}</span></td>
+            <td>{% if item.last_login_at %}{{ item.last_login_at.strftime("%d/%m/%Y %H:%M") }}{% else %}—{% endif %}</td>
+            <td class="actions">
+              <form method="post" action="/admin/users/{{ item.id }}/password">
+                <input name="password" type="password" minlength="8" placeholder="nova senha" required>
+                <button class="ghost" type="submit">Trocar senha</button>
+              </form>
+              {% if item.id != user.id %}
+              <form method="post" action="/admin/users/{{ item.id }}/toggle">
+                <button class="{% if item.is_active %}danger{% else %}ghost{% endif %}" type="submit">{% if item.is_active %}Desativar{% else %}Ativar{% endif %}</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

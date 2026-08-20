@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KingVCam</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">KingVCam</div>
+    <div class="toggles">
+      <div class="lang" aria-label="Language">
+        <button type="button" class="active" data-lang="pt">PT</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+    </div>
+  </header>
+  <main class="narrow">
+    <img class="logo small" src="/static/logo.png" alt="KingVCam" width="88" height="88">
+    <h1 data-i18n="pay_title">Pagamento</h1>
+    <p id="status" data-i18n="confirming">Confirmando o pagamento...</p>
+    <div id="keybox" hidden>
+      <p data-i18n="your_key">Sua chave:</p>
+      <code id="key"></code>
+      <p class="note" data-i18n="keep_key">No overlay, toque em KingVCam panel, cole a chave KV- e toque em Entrar.</p>
+    </div>
+  </main>
+  <script src="/static/i18n.js"></script>
+  <script>
+    const orderId = {{ order_id|tojson }};
+    const messages = {
+      pt: {
+        missing: "Pedido não encontrado.",
+        paid: "Pagamento confirmado.",
+        failed: "Pagamento não concluído.",
+      },
+      en: {
+        missing: "Order not found.",
+        paid: "Payment confirmed.",
+        failed: "Payment was not completed.",
+      },
+    };
+    function lang() {
+      return localStorage.getItem("kv_lang") || "pt";
+    }
+    async function poll() {
+      const t = messages[lang()] || messages.pt;
+      if (!orderId) {
+        document.getElementById("status").textContent = t.missing;
+        return;
+      }
+      const res = await fetch("/api/orders/" + orderId);
+      if (!res.ok) {
+        document.getElementById("status").textContent = t.missing;
+        return;
+      }
+      const data = await res.json();
+      if (data.status === "paid" && data.license_key) {
+        document.getElementById("status").textContent = t.paid;
+        document.getElementById("key").textContent = data.license_key;
+        document.getElementById("keybox").hidden = false;
+        return;
+      }
+      if (["failed", "expired", "refunded"].includes(data.status)) {
+        document.getElementById("status").textContent = t.failed;
+        return;
+      }
+      setTimeout(poll, 3000);
+    }
+    poll();
+  </script>
+</body>
+</html>

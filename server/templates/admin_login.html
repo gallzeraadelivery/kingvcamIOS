@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · KingVCam</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">KingVCam</div>
+  </header>
+  <main class="narrow">
+    <img class="logo small" src="/static/logo.png" alt="KingVCam" width="88" height="88">
+    <h1>Painel administrativo</h1>
+    {% if not configured %}
+    <p class="note">Defina <code class="inline">ADMIN_USER</code> e <code class="inline">ADMIN_PASSWORD</code> no <code class="inline">.env</code> e recarregue o container.</p>
+    {% else %}
+    <p class="note">Acesso restrito. Entre com usuário e senha.</p>
+    {% if error == "auth" %}
+    <p class="flash error">Usuário ou senha inválidos.</p>
+    {% elif error == "config" %}
+    <p class="flash error">Nenhum administrador configurado.</p>
+    {% endif %}
+    <form class="admin-login" method="post" action="/admin/login">
+      <label for="username">Usuário</label>
+      <input id="username" name="username" type="text" autocomplete="username" required>
+      <label for="password">Senha</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button type="submit">Entrar</button>
+    </form>
+    {% endif %}
+  </main>
+</body>
+</html>

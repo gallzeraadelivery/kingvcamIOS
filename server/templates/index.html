@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KingVCam</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">KingVCam</div>
+    <div class="toggles">
+      <div class="lang" aria-label="Language">
+        <button type="button" class="active" data-lang="pt">PT</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <div class="currency" aria-label="Currency">
+        <button type="button" data-currency="BRL">🇧🇷 BRL</button>
+        <button type="button" class="active" data-currency="USD">🇺🇸 USD</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <img class="logo" src="/static/logo.png" alt="KingVCam" width="128" height="128">
+      <p class="eyebrow" data-i18n="eyebrow">Valores iniciais</p>
+    </div>
+    <section class="plans">
+      {% for plan in plans %}
+      <article class="card{% if plan.popular %} popular{% endif %}">
+        {% if plan.popular %}<span class="badge" data-i18n="popular">POPULAR</span>{% endif %}
+        <h2 data-i18n="plan_{{ plan.id }}">{{ plan.label }}</h2>
+        <p class="price" data-usd="{{ '%.2f'|format(plan.price_usd) }}">$ {{ '%.2f'|format(plan.price_usd) }}</p>
+        <form method="post" action="/api/checkout/{{ plan.id }}">
+          <button type="submit" data-i18n="pay">Pagar com cripto</button>
+        </form>
+      </article>
+      {% endfor %}
+    </section>
+    <p class="note" data-i18n="note">Pagamento em criptomoeda. PIX em breve. A chave de ativação aparece depois da confirmação.</p>
+  </main>
+  <script src="/static/i18n.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
