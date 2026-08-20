@@ -19,3 +19,10 @@ venv/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Servidor / secrets
+server/.env
+*.pem
+
+# Theos build artifacts
+gate/.theos/

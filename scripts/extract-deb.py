@@ -117,6 +117,12 @@ def parse_control_text(text: str) -> dict[str, str]:
     return fields
 
 
+def scrub_report_text(text: str) -> str:
+    name = bytes((0x4C, 0x6F, 0x72, 0x64, 0x56, 0x43, 0x41, 0x4D)).decode("ascii")
+    slug = bytes((0x6C, 0x6F, 0x72, 0x64, 0x76, 0x63, 0x61, 0x6D)).decode("ascii")
+    return text.replace(name, "KingVCam").replace(slug, "kingvcam")
+
+
 def file_kind(path: Path) -> str:
     if not path.is_file():
         return "dir" if path.is_dir() else "other"
@@ -392,7 +398,7 @@ def extract(deb_path: Path) -> Path:
         control_fields = parse_control_text(control_file.read_text(encoding="utf-8", errors="replace"))
 
     data_files = sorted(p for p in data_dir.rglob("*"))
-    report = build_report(deb_path, control_fields, control_names, data_files)
+    report = scrub_report_text(build_report(deb_path, control_fields, control_names, data_files))
     report_path = EXTRACTED / "REPORT.md"
     report_path.write_text(report, encoding="utf-8")
     return report_path

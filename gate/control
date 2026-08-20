@@ -1,0 +1,9 @@
+Package: com.kingvcam.gate
+Name: KingVCam Gate
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: Key activation gate for KingVCam
+Maintainer: KingVCam
+Author: KingVCam
+Section: Tweaks
