@@ -16,9 +16,9 @@ import shutil
 import subprocess
 
 
-EXPECTED_SHA256 = "3084934c41742af6bf210894f21348000eda0a07186a42609d6a8abf9043cd55"
+EXPECTED_SHA256 = "e83357e2e642b7ba55bcb37b3fc1a6c00ac82054696fb5903a0e725ed0c744a4"
 EXPECTED_PACKAGE = "com.apple.avservicesd.rootless"
-EXPECTED_VERSION = "3.0.44-19"
+EXPECTED_VERSION = "3.0.44-20"
 EXPECTED_ARCH = "iphoneos-arm64"
 
 
